@@ -1,5 +1,5 @@
 /*
-C++ template repository
+C++17 REST server library
 Version 1.0.0
 https://github.com/mosure/cpp-template
 
@@ -30,15 +30,8 @@ SOFTWARE.
 
 
 /**
-    @brief namespace for Mitchell Mosure - cpp-template
+    @brief namespace for Mitchell Mosure - rest-server-inversify-cpp
     @see https://github.com/mosure
     @since version 1.0.0
 */
-namespace mosure::cpp_template {
-
-    struct Foo {
-        int bar() {
-            return 8128;
-        }
-    };
-}
+namespace mosure::rest { }
