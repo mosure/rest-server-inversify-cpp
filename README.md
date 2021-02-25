@@ -8,10 +8,107 @@
 [![GitHub Issues](https://img.shields.io/github/issues/mosure/rest-server-inversify-cpp)](https://github.com/mosure/rest-server-inversify-cpp/issues)
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/mosure/rest-server-inversify-cpp.svg)](http://isitmaintained.com/project/mosure/rest-server-inversify-cpp "Average time to resolve an issue")
 
-C++17 REST server library
+C++20 REST server library
 
 ## Features
 *   Cross platform (macOS, Ubuntu, Windows)
+*   Coroutine support
+
+## Documentation
+
+## Integration
+
+```cpp
+
+#include <mosure/rest.hpp>
+
+// for convenience
+namespace rest = mosure::rest;
+
+```
+
+### Examples
+
+#### Register a Middleware
+
+```cpp
+
+struct JsonMiddleware : rest::Middleware<> {
+    JsonMiddleware(int foo, float bar) { }
+
+    task<> process(rest::Context& ctx) override {
+        co_return;
+    }
+};
+
+inline static auto 
+injectJsonMiddleware = inversify::Injectable<JsonMiddleware>::inject(
+    symbols::foo,
+    symbols::bar
+);
+
+```
+
+#### Register Controllers
+
+```cpp
+
+struct FooController
+    :
+    rest::Controller<
+        rest::Route<
+            rest::BasePath<"/foo">,
+            rest::Endpoint<rest::GET, "/", &GetFoo>,
+            rest::Endpoint<rest::GET, "/bar", &GetBar>
+        >,
+        rest::PreMiddleware<
+            JsonMiddleware
+        >
+    >
+{
+    FooController(int foo, float bar) : foo_(foo), bar_(bar) {  }
+
+    task<rest::Response&> GetFoo(rest::Context& ctx) {
+        return rest::status::code(201, foo);
+    }
+
+    task<rest::Response&> GetBar(rest::Context& ctx) {
+        return rest::status::ok(bar_);
+    }
+
+    int foo_;
+    float bar_;
+};
+
+inline static auto 
+injectFooController = inversify::Injectable<FooController>::inject(
+    symbols::foo,
+    symbols::bar
+);
+
+```
+
+#### Create a Server
+
+```cpp
+
+rest::Server<
+    BeastServer,
+    rest::PreMiddleware<
+        JsonMiddleware
+    >,
+    rest::Route<
+        rest::BasePath<"/api">,
+        FooController
+    >,
+    rest::PostMiddleware<
+        // OtherMiddleware
+    >
+> server;
+
+server.run("127.0.0.1", 5050);
+
+```
 
 ## Running tests
 `bazel run test`
