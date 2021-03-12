@@ -80,11 +80,13 @@ struct FooController
     float bar_;
 };
 
-inline static auto 
-injectFooController = inversify::Injectable<FooController>::inject(
-    symbols::foo,
-    symbols::bar
-);
+template <>
+struct inversify::Injectable<FooController>
+    : inversify::Inject<
+        symbols::foo,
+        symbols::bar
+    >
+{ };
 
 ```
 
@@ -92,19 +94,7 @@ injectFooController = inversify::Injectable<FooController>::inject(
 
 ```cpp
 
-rest::Server<
-    BeastServer,
-    rest::PreMiddleware<
-        JsonMiddleware
-    >,
-    rest::Route<
-        rest::BasePath<"/api">,
-        FooController
-    >,
-    rest::PostMiddleware<
-        // OtherMiddleware
-    >
-> server;
+rest::Server<BeastServer> server;
 
 server.run("127.0.0.1", 5050);
 
