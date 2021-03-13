@@ -9,10 +9,9 @@ namespace mosure::rest {
     template <
         Method method,
         meta::StringLiteral Path,
-        typename M,
-        typename T
+        MemFn F
     >
     struct Endpoint {
-        constexpr auto 
+        constexpr static auto function = F.function;
     };
 }

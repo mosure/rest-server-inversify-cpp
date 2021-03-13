@@ -12,5 +12,5 @@ template <
     typename... MiddlewareArgs
 >
 struct Controller {
-    // How does a controller know what the shape of request is?
+    
 };
