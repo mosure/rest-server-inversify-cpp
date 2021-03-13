@@ -7,8 +7,13 @@
 
 namespace mosure::rest::meta {
 
-    template <typename Arg, typename Tuple>
+    template <typename Arg, typename... Args>
     struct tuple_concat;
+
+    template <typename Arg, typename... Args>
+    struct tuple_concat<Arg, Args...> {
+        using value = std::tuple<Arg, Args...>;
+    };
 
     template <typename Arg, typename... Args>
     struct tuple_concat<Arg, std::tuple<Args...>> {
@@ -43,6 +48,12 @@ namespace mosure::rest::meta {
             typename filter<Args...>::value
         >;
     }
+
+    template <
+        template <typename...> typename Condition,
+        typename... Args
+    >
+    using filter_t = typename filter<Condition, Args...>::value;
 
     template <typename R, typename T, typename... Args>
     struct MemFn {

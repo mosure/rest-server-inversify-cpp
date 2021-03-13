@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <mosure/method.hpp>
+#include <mosure/rest/method.hpp>
 
 
 template <typename InternalType>
